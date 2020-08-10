@@ -28,7 +28,8 @@ def polling_loop(hostname, port, interval):
             except KeyboardInterrupt:
                 break
 
-def main(argv):
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("hostname", help="Hostname of Airspaces server")
     parser.add_argument(
@@ -37,10 +38,6 @@ def main(argv):
     parser.add_argument(
         "--interval", type=float, default=1,
         help="Number of seconds to wait between polling for updates (default 1.0)")
-    args = parser.parse_args(argv[1:])
+    args = parser.parse_args()
 
     polling_loop(args.hostname, args.port, args.interval)
-
-
-if __name__ == "__main__":
-    main(sys.argv)

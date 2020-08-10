@@ -1,3 +1,4 @@
+import sys
 import unittest
 from unittest import mock
 
@@ -7,28 +8,20 @@ from fsuipc_airspaces import fsuipc_airspaces
 @mock.patch("fsuipc_airspaces.fsuipc_airspaces.polling_loop")
 class TestMain(unittest.TestCase):
     def test_main_parses_command_line_and_starts_polling_loop(self, mock_polling_loop):
-        fsuipc_airspaces.main([
-            "ARGV0-UNUSED",
-            "HOSTNAME",
-            "54321"
-        ])
+        with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "HOSTNAME", "54321"]):
+            fsuipc_airspaces.main()
 
         mock_polling_loop.assert_called_once_with("HOSTNAME", 54321, 1)
 
     def test_main_defaults_port_to_49003_when_not_specified(self, mock_polling_loop):
-        fsuipc_airspaces.main([
-            "ARGV0-UNUSED",
-            "HOSTNAME"
-        ])
+        with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "HOSTNAME"]):
+            fsuipc_airspaces.main()
 
         mock_polling_loop.assert_called_once_with("HOSTNAME", 49003, 1)
 
     def test_main_sets_polling_interval_when_specified(self, mock_polling_loop):
-        fsuipc_airspaces.main([
-            "ARGV0-UNUSED",
-            "--interval", "0.25",
-            "HOSTNAME"
-        ])
+        with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "--interval", "0.25", "HOSTNAME"]):
+            fsuipc_airspaces.main()
 
         mock_polling_loop.assert_called_once_with("HOSTNAME", 49003, 0.25)
 

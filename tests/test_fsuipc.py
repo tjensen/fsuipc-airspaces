@@ -1,8 +1,7 @@
 import unittest
 from unittest import mock
 
-import pyuipc
-
+from fsuipc_airspaces import pyuipc
 from fsuipc_airspaces.fsuipc import FSUIPC
 
 

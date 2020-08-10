@@ -1,4 +1,4 @@
-import pyuipc
+from fsuipc_airspaces import pyuipc
 
 
 _TRANSPONDER_ADDR = 0x354

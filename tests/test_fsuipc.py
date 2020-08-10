@@ -29,7 +29,7 @@ class TestFSUIPC(unittest.TestCase):
         self.mock_pyuipc_close.assert_called_once_with()
 
     def test_can_be_used_as_a_context_manager(self):
-        with FSUIPC() as fsuipc:
+        with FSUIPC():
             self.mock_pyuipc_open.assert_called_once_with(pyuipc.SIM_ANY)
 
         self.mock_pyuipc_close.assert_called_once_with()

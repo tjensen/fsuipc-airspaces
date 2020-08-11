@@ -65,6 +65,7 @@ setuptools.setup(
         "Topic :: Games/Entertainment :: Simulation"
     ],
     python_requires=">=3.8,<3.9",
+    setup_requires=["wheel"],
     ext_package="fsuipc_airspaces",
     ext_modules=[setuptools.Extension("pyuipc", [])],
     entry_points={

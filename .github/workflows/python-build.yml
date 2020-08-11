@@ -1,10 +1,6 @@
-name: Python package
+name: Python Build
 
-on:
-  push:
-    branches: [ ci-build ]
-  pull_request:
-    branches: [ master ]
+on: [push]
 
 jobs:
   build:

@@ -29,9 +29,6 @@ setuptools.setup(
     ],
     python_requires=">=3.6",
     install_requires=["fsuipc"],
-    dependency_links=[
-        "git+git://github.com/tjensen/fsuipc.git#egg=fsuipc"
-    ],
     entry_points={
         "console_scripts": [
             "fsuipc_airspaces = fsuipc_airspaces.fsuipc_airspaces:main"

@@ -22,10 +22,12 @@ setuptools.setup(
         "Environment :: Win32 (MS Windows)",
         "License :: OSI Approved :: MIT License",
         "Operating System :: Microsoft :: Windows",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Topic :: Games/Entertainment :: Simulation"
     ],
-    python_requires=">=3.5,<3.9",
+    python_requires=">=3.6",
     install_requires=["fsuipc"],
     dependency_links=[
         "git+git://github.com/tjensen/fsuipc.git#egg=fsuipc"

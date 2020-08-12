@@ -1,4 +1,4 @@
-from fsuipc_airspaces import pyuipc
+import fsuipc
 
 
 _TRANSPONDER_ADDR = 0x354
@@ -23,15 +23,15 @@ def _altitude(raw):
     return float(raw) * 3.28084 / (65536 * 65536)
 
 
-class FSUIPC():
+class SimulatorConnection():
     def __init__(self):
-        pyuipc.open(pyuipc.SIM_ANY)
+        self.fsuipc = fsuipc.FSUIPC()
 
     def close(self):
-        pyuipc.close()
+        self.fsuipc.close()
 
     def read(self):
-        prepared_data = pyuipc.prepare_data(
+        prepared_data = self.fsuipc.prepare_data(
             [
                 (_TRANSPONDER_ADDR, "H"),
                 (_LATITUDE_ADDR, "l"),
@@ -39,7 +39,7 @@ class FSUIPC():
                 (_ALTITUDE_ADDR, "l")
             ], True)
 
-        data = pyuipc.read(prepared_data)
+        data = self.fsuipc.read(prepared_data)
 
         return {
             "transponder": _transponder(data[0]),

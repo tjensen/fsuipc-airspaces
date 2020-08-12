@@ -26,28 +26,28 @@ class TestMain(unittest.TestCase):
         mock_polling_loop.assert_called_once_with("HOSTNAME", 49003, 0.25)
 
 
-@mock.patch("fsuipc_airspaces.fsuipc_airspaces.FSUIPC")
+@mock.patch("fsuipc_airspaces.fsuipc_airspaces.SimulatorConnection")
 @mock.patch("fsuipc_airspaces.fsuipc_airspaces.XPlaneDataOut")
 @mock.patch("time.sleep")
 class TestPollingLoop(unittest.TestCase):
     def test_loops_until_ctrl_c_is_pressed(
-            self, mock_sleep, mock_xplane_dataout_class, mock_fsuipc_class):
+            self, mock_sleep, mock_xplane_dataout_class, mock_simulator_class):
         mock_sleep.side_effect = [None, None, None, KeyboardInterrupt]
 
-        mock_fsuipc = mock_fsuipc_class.return_value.__enter__.return_value
+        mock_simulator = mock_simulator_class.return_value.__enter__.return_value
 
         mock_xplane_dataout = mock_xplane_dataout_class.return_value
 
         fsuipc_airspaces.polling_loop("HOSTNAME", 12345, 7.5)
 
-        mock_fsuipc_class.assert_called_once_with()
+        mock_simulator_class.assert_called_once_with()
 
         mock_xplane_dataout_class.assert_called_once_with("HOSTNAME", 12345)
 
-        self.assertEqual(4, mock_fsuipc.read.call_count)
-        mock_fsuipc.read.assert_called_with()
+        self.assertEqual(4, mock_simulator.read.call_count)
+        mock_simulator.read.assert_called_with()
 
         self.assertEqual(4, mock_xplane_dataout.write.call_count)
-        mock_xplane_dataout.write.assert_called_with(mock_fsuipc.read.return_value)
+        mock_xplane_dataout.write.assert_called_with(mock_simulator.read.return_value)
 
         self.assertEqual(4, mock_sleep.call_count)

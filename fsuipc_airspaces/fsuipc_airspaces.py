@@ -2,7 +2,7 @@ import argparse
 import sys
 import time
 
-from fsuipc_airspaces.fsuipc import FSUIPC
+from fsuipc_airspaces.simulator_connection import SimulatorConnection
 from fsuipc_airspaces.xplane_dataout import XPlaneDataOut
 
 
@@ -10,7 +10,7 @@ SPINNER = ["\\", "|", "/", "-"]
 
 
 def polling_loop(hostname, port, interval):
-    with FSUIPC() as fsuipc:
+    with SimulatorConnection() as sim:
         dataout = XPlaneDataOut(hostname, port)
 
         while True:
@@ -19,7 +19,7 @@ def polling_loop(hostname, port, interval):
                 SPINNER.append(spinner)
                 sys.stdout.write(f"\r{spinner} Running (Press Ctrl+C to stop)")
 
-                data = fsuipc.read()
+                data = sim.read()
 
                 dataout.write(data)
 

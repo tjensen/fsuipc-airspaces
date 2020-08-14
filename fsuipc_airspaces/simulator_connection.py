@@ -39,7 +39,7 @@ class SimulatorConnection():
                 (_ALTITUDE_ADDR, "l")
             ], True)
 
-        data = self.fsuipc.read(prepared_data)
+        data = prepared_data.read()
 
         return {
             "transponder": _transponder(data[0]),

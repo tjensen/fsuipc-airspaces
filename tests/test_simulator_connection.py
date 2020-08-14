@@ -29,7 +29,9 @@ class TestSimulatorConnection(unittest.TestCase):
         self.mock_fsuipc.close.assert_called_once_with()
 
     def test_read_returns_transponder_code_and_latitude_and_longitude_and_altitude(self):
-        self.mock_fsuipc.read.return_value = [
+        mock_prepared_data = self.mock_fsuipc.prepare_data.return_value
+
+        mock_prepared_data.read.return_value = [
             0x1234, 0x5240c70c992ba0, -0x57797e88d4031c00, 0x19d705b6f59]
 
         with SimulatorConnection() as sim:
@@ -38,7 +40,7 @@ class TestSimulatorConnection(unittest.TestCase):
         self.mock_fsuipc.prepare_data.assert_called_once_with(
             [(0x354, "H"), (0x560, "l"), (0x568, "l"), (0x570, "l")], True)
 
-        self.mock_fsuipc.read.assert_called_once_with(self.mock_fsuipc.prepare_data.return_value)
+        mock_prepared_data.read.assert_called_once_with()
 
         self.assertEqual(4, len(data))
         self.assertEqual(1234, data["transponder"])

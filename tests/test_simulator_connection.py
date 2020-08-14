@@ -12,10 +12,13 @@ class TestSimulatorConnection(unittest.TestCase):
 
         self.mock_fsuipc = self.mock_fsuipc_class.return_value
 
-    def test_constructor_calls_open(self):
+    def test_constructor_calls_open_and_prepares_data(self):
         SimulatorConnection()
 
         self.mock_fsuipc_class.assert_called_once_with()
+
+        self.mock_fsuipc.prepare_data.assert_called_once_with(
+            [(0x354, "H"), (0x560, "l"), (0x568, "l"), (0x570, "l")], True)
 
     def test_close_calls_close(self):
         SimulatorConnection().close()
@@ -36,9 +39,6 @@ class TestSimulatorConnection(unittest.TestCase):
 
         with SimulatorConnection() as sim:
             data = sim.read()
-
-        self.mock_fsuipc.prepare_data.assert_called_once_with(
-            [(0x354, "H"), (0x560, "l"), (0x568, "l"), (0x570, "l")], True)
 
         mock_prepared_data.read.assert_called_once_with()
 

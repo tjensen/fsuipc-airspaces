@@ -30,7 +30,7 @@ setuptools.setup(
         "Topic :: Games/Entertainment :: Simulation"
     ],
     python_requires=">=3.6",
-    install_requires=["fsuipc==1.0.3"],
+    install_requires=["fsuipc==1.1.0"],
     entry_points={
         "console_scripts": [
             "fsuipc_airspaces = fsuipc_airspaces.fsuipc_airspaces:main"

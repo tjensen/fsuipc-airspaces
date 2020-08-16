@@ -16,6 +16,8 @@ setuptools.setup(
     license="MIT",
     url="https://github.com/tjensen/fsuipc-airspaces",
     packages=setuptools.find_packages(exclude=["tests"]),
+    package_data={"fsuipc_airspaces": ["py.typed"]},
+    zip_safe=False,  # Enables mypy to find the installed package
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",

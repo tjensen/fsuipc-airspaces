@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 import time
+from typing import Union
 
 import fsuipc
 
@@ -14,7 +15,9 @@ from fsuipc_airspaces.xplane_dataout import XPlaneDataOut
 SPINNER = ["\\", "|", "/", "-"]
 
 
-def polling_loop(hostname, port, interval, position):
+def polling_loop(
+    hostname: str, port: int, interval: float, position: Union[FSPosition, GPSPosition]
+) -> None:
     with SimulatorConnection(position) as sim:
         dataout = XPlaneDataOut(hostname, port)
 
@@ -38,7 +41,7 @@ def polling_loop(hostname, port, interval, position):
                 break
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("hostname", help="Hostname of Airspaces server")
     parser.add_argument(
@@ -51,6 +54,7 @@ def main():
         "--gps", action="store_true", help="Poll aircraft coordinates from GPS data")
     args = parser.parse_args()
 
+    position: Union[FSPosition, GPSPosition]
     if args.gps:
         position = GPSPosition()
     else:

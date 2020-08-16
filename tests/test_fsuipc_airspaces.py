@@ -11,7 +11,8 @@ from fsuipc_airspaces.gps_position import GPSPosition
 
 @mock.patch("fsuipc_airspaces.fsuipc_airspaces.polling_loop", autospec=True)
 class TestMain(unittest.TestCase):
-    def test_main_parses_command_line_and_starts_polling_loop(self, mock_polling_loop):
+    def test_main_parses_command_line_and_starts_polling_loop(
+            self, mock_polling_loop: mock.Mock) -> None:
         with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "HOSTNAME", "54321"]):
             fsuipc_airspaces.main()
 
@@ -21,7 +22,8 @@ class TestMain(unittest.TestCase):
             FSPosition().data_specification(),
             mock_polling_loop.call_args[0][3].data_specification())
 
-    def test_main_defaults_port_to_49003_when_not_specified(self, mock_polling_loop):
+    def test_main_defaults_port_to_49003_when_not_specified(
+            self, mock_polling_loop: mock.Mock) -> None:
         with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "HOSTNAME"]):
             fsuipc_airspaces.main()
 
@@ -31,7 +33,7 @@ class TestMain(unittest.TestCase):
             FSPosition().data_specification(),
             mock_polling_loop.call_args[0][3].data_specification())
 
-    def test_main_sets_polling_interval_when_specified(self, mock_polling_loop):
+    def test_main_sets_polling_interval_when_specified(self, mock_polling_loop: mock.Mock) -> None:
         with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "--interval", "0.25", "HOSTNAME"]):
             fsuipc_airspaces.main()
 
@@ -41,7 +43,7 @@ class TestMain(unittest.TestCase):
             FSPosition().data_specification(),
             mock_polling_loop.call_args[0][3].data_specification())
 
-    def test_main_uses_gps_position_when_specified(self, mock_polling_loop):
+    def test_main_uses_gps_position_when_specified(self, mock_polling_loop: mock.Mock) -> None:
         with mock.patch.object(sys, "argv", ["ARGV0-UNUSED", "--gps", "HOSTNAME"]):
             fsuipc_airspaces.main()
 
@@ -53,7 +55,7 @@ class TestMain(unittest.TestCase):
 
 
 class TestPollingLoop(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         simulator_patcher = mock.patch(
@@ -73,7 +75,7 @@ class TestPollingLoop(unittest.TestCase):
         self.mock_simulator = self.mock_simulator_class.return_value.__enter__.return_value
         self.mock_xplane_dataout = self.mock_xplane_dataout_class.return_value
 
-    def test_loops_until_ctrl_c_is_pressed(self):
+    def test_loops_until_ctrl_c_is_pressed(self) -> None:
         self.mock_sleep.side_effect = [None, None, None, KeyboardInterrupt]
 
         fsuipc_airspaces.polling_loop("HOSTNAME", 12345, 7.5, mock.sentinel.position)
@@ -90,7 +92,7 @@ class TestPollingLoop(unittest.TestCase):
 
         self.assertEqual(4, self.mock_sleep.call_count)
 
-    def test_continues_polling_when_write_raises_an_os_error(self):
+    def test_continues_polling_when_write_raises_an_os_error(self) -> None:
         self.mock_sleep.side_effect = [None, None, None, KeyboardInterrupt]
 
         self.mock_xplane_dataout.write.side_effect = OSError
@@ -101,7 +103,7 @@ class TestPollingLoop(unittest.TestCase):
         self.assertEqual(4, self.mock_xplane_dataout.write.call_count)
         self.assertEqual(4, self.mock_sleep.call_count)
 
-    def test_stops_polling_when_write_raises_an_exception_that_is_not_an_os_error(self):
+    def test_stops_polling_when_write_raises_an_exception_that_is_not_an_os_error(self) -> None:
         self.mock_sleep.side_effect = [None, None, None, KeyboardInterrupt]
 
         self.mock_xplane_dataout.write.side_effect = RuntimeError
@@ -113,7 +115,7 @@ class TestPollingLoop(unittest.TestCase):
         self.assertEqual(1, self.mock_xplane_dataout.write.call_count)
         self.assertEqual(0, self.mock_sleep.call_count)
 
-    def test_continues_polling_when_read_raises_an_fsuipc_exception(self):
+    def test_continues_polling_when_read_raises_an_fsuipc_exception(self) -> None:
         self.mock_sleep.side_effect = [None, None, None, KeyboardInterrupt]
 
         self.mock_simulator.read.side_effect = fsuipc.FSUIPCException(fsuipc.ERR_TIMEOUT)
@@ -124,7 +126,8 @@ class TestPollingLoop(unittest.TestCase):
         self.assertEqual(0, self.mock_xplane_dataout.write.call_count)
         self.assertEqual(4, self.mock_sleep.call_count)
 
-    def test_stops_polling_when_read_raises_an_exception_that_is_not_an_fsuipc_exception(self):
+    def test_stops_polling_when_read_raises_an_exception_that_is_not_an_fsuipc_exception(
+            self) -> None:
         self.mock_sleep.side_effect = [None, None, None, KeyboardInterrupt]
 
         self.mock_simulator.read.side_effect = RuntimeError

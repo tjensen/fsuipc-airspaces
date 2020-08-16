@@ -1,43 +1,31 @@
+from types import TracebackType
+from typing import Optional, Type, Union
+
 import fsuipc
 
-
-_TRANSPONDER_ADDR = 0x354
-_LATITUDE_ADDR = 0x560
-_LONGITUDE_ADDR = 0x568
-_ALTITUDE_ADDR = 0x570
-
-
-def _transponder(raw):
-    return int(f"{raw:x}")
-
-
-def _latitude(raw):
-    return float(raw) * 90 / (10001750 * 65536 * 65536)
-
-
-def _longitude(raw):
-    return float(raw) * 360 / (65536 * 65536 * 65536 * 65536)
-
-
-def _altitude(raw):
-    return float(raw) * 3.28084 / (65536 * 65536)
+from fsuipc_airspaces.fs_position import FSPosition
+from fsuipc_airspaces.gps_position import GPSPosition
+from fsuipc_airspaces.position import Position
 
 
 class SimulatorConnection():
-    def __init__(self, position):
+    def __init__(self, position: Union[FSPosition, GPSPosition]) -> None:
         self._fsuipc = fsuipc.FSUIPC()
         self._position = position
 
         self._prepared_data = self._fsuipc.prepare_data(self._position.data_specification(), True)
 
-    def close(self):
+    def close(self) -> None:
         self._fsuipc.close()
 
-    def read(self):
+    def read(self) -> Position:
         return self._position.process_data(self._prepared_data.read())
 
-    def __enter__(self):
+    def __enter__(self) -> "SimulatorConnection":
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(
+        self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType]
+    ) -> None:
         self.close()

@@ -1,4 +1,12 @@
-import collections
+import typing
 
 
-Position = collections.namedtuple("Position", ["latitude", "longitude", "altitude", "transponder"])
+Position = typing.NamedTuple(
+    "Position",
+    [
+        ("latitude", float),
+        ("longitude", float),
+        ("altitude", float),
+        ("transponder", int)
+    ]
+)

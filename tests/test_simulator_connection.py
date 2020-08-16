@@ -5,7 +5,7 @@ from fsuipc_airspaces.simulator_connection import SimulatorConnection
 
 
 class TestSimulatorConnection(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         fsuipc_patcher = mock.patch("fsuipc.FSUIPC")
         self.mock_fsuipc_class = fsuipc_patcher.start()
         self.addCleanup(fsuipc_patcher.stop)
@@ -14,7 +14,7 @@ class TestSimulatorConnection(unittest.TestCase):
 
         self.mock_position = mock.Mock()
 
-    def test_constructor_calls_open_and_prepares_data(self):
+    def test_constructor_calls_open_and_prepares_data(self) -> None:
         SimulatorConnection(self.mock_position)
 
         self.mock_fsuipc_class.assert_called_once_with()
@@ -24,18 +24,18 @@ class TestSimulatorConnection(unittest.TestCase):
         self.mock_fsuipc.prepare_data.assert_called_once_with(
             self.mock_position.data_specification.return_value, True)
 
-    def test_close_calls_close(self):
+    def test_close_calls_close(self) -> None:
         SimulatorConnection(self.mock_position).close()
 
         self.mock_fsuipc.close.assert_called_once_with()
 
-    def test_can_be_used_as_a_context_manager(self):
+    def test_can_be_used_as_a_context_manager(self) -> None:
         with SimulatorConnection(self.mock_position):
             self.mock_fsuipc_class.assert_called_once_with()
 
         self.mock_fsuipc.close.assert_called_once_with()
 
-    def test_read_returns_transponder_code_and_latitude_and_longitude_and_altitude(self):
+    def test_read_returns_transponder_code_and_latitude_and_longitude_and_altitude(self) -> None:
         mock_prepared_data = self.mock_fsuipc.prepare_data.return_value
 
         mock_prepared_data.read.return_value = [

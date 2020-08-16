@@ -8,7 +8,7 @@ from fsuipc_airspaces.xplane_dataout import XPlaneDataOut
 
 class TestXPlaneDataOut(unittest.TestCase):
     @mock.patch("socket.socket")
-    def test_sends_data_to_airspaces_server(self, mock_socket_class):
+    def test_sends_data_to_airspaces_server(self, mock_socket_class: mock.Mock) -> None:
         mock_socket = mock_socket_class.return_value
 
         dataout = XPlaneDataOut("some.host.name", 12345)

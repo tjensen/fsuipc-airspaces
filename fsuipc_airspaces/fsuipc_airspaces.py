@@ -1,7 +1,12 @@
 import argparse
+import logging
 import sys
 import time
 
+import fsuipc
+
+from fsuipc_airspaces.fs_position import FSPosition
+from fsuipc_airspaces.gps_position import GPSPosition
 from fsuipc_airspaces.simulator_connection import SimulatorConnection
 from fsuipc_airspaces.xplane_dataout import XPlaneDataOut
 
@@ -9,19 +14,23 @@ from fsuipc_airspaces.xplane_dataout import XPlaneDataOut
 SPINNER = ["\\", "|", "/", "-"]
 
 
-def polling_loop(hostname, port, interval):
-    with SimulatorConnection() as sim:
+def polling_loop(hostname, port, interval, position):
+    with SimulatorConnection(position) as sim:
         dataout = XPlaneDataOut(hostname, port)
 
         while True:
             try:
                 spinner = SPINNER.pop(0)
                 SPINNER.append(spinner)
-                sys.stdout.write(f"\r{spinner} Running (Press Ctrl+C to stop)")
+                sys.stdout.write(f"  {spinner} Running (Press Ctrl+C to stop)\r")
 
-                data = sim.read()
-
-                dataout.write(data)
+                try:
+                    data = sim.read()
+                    dataout.write(data)
+                except fsuipc.FSUIPCException:
+                    logging.exception("Error reading from simulator")
+                except OSError:
+                    logging.exception("Error writing to Airspaces server")
 
                 time.sleep(interval)
 
@@ -38,6 +47,13 @@ def main():
     parser.add_argument(
         "--interval", type=float, default=1,
         help="Number of seconds to wait between polling for updates (default 1.0)")
+    parser.add_argument(
+        "--gps", action="store_true", help="Poll aircraft coordinates from GPS data")
     args = parser.parse_args()
 
-    polling_loop(args.hostname, args.port, args.interval)
+    if args.gps:
+        position = GPSPosition()
+    else:
+        position = FSPosition()
+
+    polling_loop(args.hostname, args.port, args.interval, position)

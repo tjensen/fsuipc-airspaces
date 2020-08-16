@@ -2,6 +2,7 @@ import socket
 import unittest
 from unittest import mock
 
+from fsuipc_airspaces.position import Position
 from fsuipc_airspaces.xplane_dataout import XPlaneDataOut
 
 
@@ -14,12 +15,14 @@ class TestXPlaneDataOut(unittest.TestCase):
 
         mock_socket_class.assert_called_once_with(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
-        dataout.write({
-            "transponder": 4321,
-            "latitude": 48.50632683,
-            "longitude": -123.0111380,
-            "altitude": 1356.4268649
-        })
+        dataout.write(
+            Position(
+                transponder=4321,
+                latitude=48.50632683,
+                longitude=-123.0111380,
+                altitude=1356.4268649
+            )
+        )
 
         mock_socket.sendto.assert_called_once_with(mock.ANY, ("some.host.name", 12345))
         self.assertEqual(

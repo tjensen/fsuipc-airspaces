@@ -9,12 +9,12 @@ _START_TRANSPONDER = bytes([104, 0, 0, 0, 0, 0, 0, 0])
 _END_TRANSPONDER = bytes([0] * 24)
 
 
-def _encode(data):
+def _encode(position):
     return _START_BUFFER \
-        + struct.pack("<fff", data["latitude"], data["longitude"], data["altitude"]) \
+        + struct.pack("<fff", position.latitude, position.longitude, position.altitude) \
         + _END_BUFFER \
         + _START_TRANSPONDER \
-        + struct.pack("<f", data["transponder"]) \
+        + struct.pack("<f", position.transponder) \
         + _END_TRANSPONDER
 
 

@@ -24,29 +24,17 @@ def _altitude(raw):
 
 
 class SimulatorConnection():
-    def __init__(self):
+    def __init__(self, position):
         self._fsuipc = fsuipc.FSUIPC()
+        self._position = position
 
-        self._prepared_data = self._fsuipc.prepare_data(
-            [
-                (_TRANSPONDER_ADDR, "H"),
-                (_LATITUDE_ADDR, "l"),
-                (_LONGITUDE_ADDR, "l"),
-                (_ALTITUDE_ADDR, "l")
-            ], True)
+        self._prepared_data = self._fsuipc.prepare_data(self._position.data_specification(), True)
 
     def close(self):
         self._fsuipc.close()
 
     def read(self):
-        data = self._prepared_data.read()
-
-        return {
-            "transponder": _transponder(data[0]),
-            "latitude": _latitude(data[1]),
-            "longitude": _longitude(data[2]),
-            "altitude": _altitude(data[3])
-        }
+        return self._position.process_data(self._prepared_data.read())
 
     def __enter__(self):
         return self
